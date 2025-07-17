@@ -200,11 +200,7 @@ const NodesPage = (): JSX.Element => {
         {
           content: (
             <Mono>
-              {node.snr}
-              {t("unit.dbm")}/{Math.min(Math.max((node.snr + 10) * 5, 0), 100)}
-              %/{/* Percentage */}
-              {(node.snr + 10) * 5}
-              {t("unit.raw")}
+              {node.snr}dBm/{Math.min(Math.max((node.snr + 10) * 5, 0), 100)}%
             </Mono>
           ),
           sortValue: node.snr,
