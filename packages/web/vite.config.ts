@@ -6,7 +6,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 let hash = "";
-let version = "Mictronics.";
+let version = "Mictronics";
 try {
   hash = execSync("git rev-parse --short HEAD", { encoding: "utf8" }).trim();
 } catch (error) {
