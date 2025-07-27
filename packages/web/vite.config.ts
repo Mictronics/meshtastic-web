@@ -6,7 +6,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 let hash = "";
-let version = "v0.0.0";
+let version = "Mictronics.";
 try {
   hash = execSync("git rev-parse --short HEAD", { encoding: "utf8" }).trim();
 } catch (error) {
@@ -19,7 +19,7 @@ try {
     encoding: "utf8",
   }).trim();
 } catch (error) {
-  console.error("Error getting git version:", error);
+  console.error("Error getting git version.");
 }
 
 const CONTENT_SECURITY_POLICY =
