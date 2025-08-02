@@ -8,4 +8,4 @@ __screenshots__*
 *.diff
 npm/
 deno.lock
-
+.idea
