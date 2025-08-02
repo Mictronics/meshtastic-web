@@ -7,7 +7,7 @@
 		"radioConfig": "Radio Config",
 		"moduleConfig": "Module Config",
 		"channels": "Kanallar",
-		"nodes": "Nodes"
+		"nodes": "Düğümler"
 	},
 	"app": {
 		"title": "Meshtastic",
