@@ -17,8 +17,7 @@ import { Sidebar } from "@components/Sidebar.tsx";
 import { Avatar } from "@components/UI/Avatar.tsx";
 import { Input } from "@components/UI/Input.tsx";
 import useLang from "@core/hooks/useLang.ts";
-import { useAppStore } from "@core/stores/appStore.ts";
-import { useDevice } from "@core/stores/deviceStore.ts";
+import { useAppStore, useDevice } from "@core/stores";
 import { Protobuf, type Types } from "@meshtastic/core";
 import { numberToHexUnpadded } from "@noble/curves/abstract/utils";
 import { LockIcon, LockOpenIcon } from "lucide-react";
@@ -72,7 +71,10 @@ const NodesPage = (): JSX.Element => {
 
   const handleLocation = useCallback(
     (location: Types.PacketMetadata<Protobuf.Mesh.Position>) => {
-      if (location.to.valueOf() !== hardware.myNodeNum) {
+      if (
+        location.to.valueOf() !== hardware.myNodeNum ||
+        location.from.valueOf() === hardware.myNodeNum
+      ) {
         return;
       }
       setSelectedLocation(location);
@@ -209,7 +211,8 @@ const NodesPage = (): JSX.Element => {
           content: (
             <Mono>{Protobuf.Mesh.HardwareModel[node.user?.hwModel ?? 0]}</Mono>
           ),
-          sortValue: Protobuf.Mesh.HardwareModel[node.user?.hwModel ?? 0],
+          sortValue:
+            Protobuf.Mesh.HardwareModel[node.user?.hwModel ?? 0] ?? "UNSET",
         },
         {
           content: <Mono>{macAddress}</Mono>,

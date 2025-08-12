@@ -1,6 +1,6 @@
 import type { Protobuf } from "@meshtastic/core";
 import { vi } from "vitest";
-import type { Device } from "./deviceStore.ts";
+import type { Device } from "./index.ts";
 
 /**
  * You can spread this base mock in your tests and override only the
@@ -36,7 +36,6 @@ export const mockDeviceStore: Device = {
     QR: false,
     shutdown: false,
     reboot: false,
-    rebootOTA: false,
     deviceName: false,
     nodeRemoval: false,
     pkiBackup: false,
@@ -45,7 +44,10 @@ export const mockDeviceStore: Device = {
     refreshKeys: false,
     deleteMessages: false,
     managedMode: false,
+    clientNotification: false,
   },
+  clientNotifications: [],
+
   setStatus: vi.fn(),
   setConfig: vi.fn(),
   setModuleConfig: vi.fn(),
@@ -86,4 +88,9 @@ export const mockDeviceStore: Device = {
   sendAdminMessage: vi.fn(),
   updateFavorite: vi.fn(),
   updateIgnored: vi.fn(),
+  addClientNotification: vi.fn(),
+  removeClientNotification: vi.fn(),
+  getClientNotification: vi.fn(),
+  getAllUnreadCount: vi.fn().mockReturnValue(0),
+  getUnreadCount: vi.fn().mockReturnValue(0),
 };

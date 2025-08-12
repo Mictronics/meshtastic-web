@@ -12,8 +12,7 @@ import {
   DynamicForm,
   type DynamicFormFormInit,
 } from "@components/Form/DynamicForm.tsx";
-import { useAppStore } from "@core/stores/appStore.ts";
-import { useDevice } from "@core/stores/deviceStore.ts";
+import { useAppStore, useDevice } from "@core/stores";
 import { deepCompareConfig } from "@core/utils/deepCompareConfig.ts";
 import { getX25519PrivateKey, getX25519PublicKey } from "@core/utils/x25519.ts";
 import { Protobuf } from "@meshtastic/core";
@@ -197,14 +196,12 @@ export const Security = ({ onFormInit }: SecurityConfigProps) => {
                 description: t("security.primaryAdminKey.description"),
                 bits,
                 devicePSKBitCount: 32,
-                hide: true,
                 actionButtons: [],
                 disabledBy: [
                   { fieldName: "adminChannelEnabled", invert: true },
                 ],
                 properties: {
                   showCopyButton: true,
-                  showPasswordToggle: true,
                 },
               },
               {
@@ -215,14 +212,12 @@ export const Security = ({ onFormInit }: SecurityConfigProps) => {
                 description: t("security.secondaryAdminKey.description"),
                 bits,
                 devicePSKBitCount: 32,
-                hide: true,
                 actionButtons: [],
                 disabledBy: [
                   { fieldName: "adminChannelEnabled", invert: true },
                 ],
                 properties: {
                   showCopyButton: true,
-                  showPasswordToggle: true,
                 },
               },
               {
@@ -233,14 +228,12 @@ export const Security = ({ onFormInit }: SecurityConfigProps) => {
                 description: t("security.tertiaryAdminKey.description"),
                 bits,
                 devicePSKBitCount: 32,
-                hide: true,
                 actionButtons: [],
                 disabledBy: [
                   { fieldName: "adminChannelEnabled", invert: true },
                 ],
                 properties: {
                   showCopyButton: true,
-                  showPasswordToggle: true,
                 },
               },
               {
