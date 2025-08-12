@@ -54,7 +54,6 @@ export interface Device {
     QR: boolean;
     shutdown: boolean;
     reboot: boolean;
-    rebootOTA: boolean;
     deviceName: boolean;
     nodeRemoval: boolean;
     pkiBackup: boolean;
@@ -63,7 +62,9 @@ export interface Device {
     refreshKeys: boolean;
     deleteMessages: boolean;
     managedMode: boolean;
+    clientNotification: boolean;
   };
+  clientNotifications: Protobuf.Mesh.ClientNotification[];
 
   setStatus: (status: Types.DeviceStatusEnum) => void;
   setConfig: (config: Protobuf.Config.Config) => void;
@@ -126,6 +127,13 @@ export interface Device {
   sendAdminMessage: (message: Protobuf.Admin.AdminMessage) => void;
   updateFavorite: (nodeNum: number, isFavorite: boolean) => void;
   updateIgnored: (nodeNum: number, isIgnored: boolean) => void;
+  addClientNotification: (
+    clientNotificationPacket: Protobuf.Mesh.ClientNotification,
+  ) => void;
+  removeClientNotification: (index: number) => void;
+  getClientNotification: (
+    index: number,
+  ) => Protobuf.Mesh.ClientNotification | undefined;
 }
 
 export interface DeviceState {
@@ -172,15 +180,16 @@ export const useDeviceStore = createStore<PrivateDeviceState>((set, get) => ({
             nodeDetails: false,
             unsafeRoles: false,
             refreshKeys: false,
-            rebootOTA: false,
             deleteMessages: false,
             managedMode: false,
+            clientNotification: false,
           },
           pendingSettingsChanges: false,
           messageDraft: "",
           nodeErrors: new Map(),
           unreadCounts: new Map(),
           nodesMap: new Map(),
+          clientNotifications: [],
 
           setStatus: (status: Types.DeviceStatusEnum) => {
             set(
@@ -848,6 +857,37 @@ export const useDeviceStore = createStore<PrivateDeviceState>((set, get) => ({
                 }
               }),
             );
+          },
+          addClientNotification: (
+            clientNotificationPacket: Protobuf.Mesh.ClientNotification,
+          ) => {
+            set(
+              produce<PrivateDeviceState>((draft) => {
+                const device = draft.devices.get(id);
+                if (!device) {
+                  return;
+                }
+                device.clientNotifications.push(clientNotificationPacket);
+              }),
+            );
+          },
+          removeClientNotification: (index: number) => {
+            set(
+              produce<PrivateDeviceState>((draft) => {
+                const device = draft.devices.get(id);
+                if (!device) {
+                  return;
+                }
+                device.clientNotifications.splice(index, 1);
+              }),
+            );
+          },
+          getClientNotification: (index: number) => {
+            const device = get().devices.get(id);
+            if (!device) {
+              return;
+            }
+            return device.clientNotifications[index];
           },
         });
       }),

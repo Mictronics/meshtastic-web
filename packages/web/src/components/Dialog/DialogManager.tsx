@@ -1,3 +1,4 @@
+import { ClientNotificationDialog } from "@components/Dialog/ClientNotificationDialog/ClientNotificationDialog.tsx";
 import { DeleteMessagesDialog } from "@components/Dialog/DeleteMessagesDialog/DeleteMessagesDialog.tsx";
 import { DeviceNameDialog } from "@components/Dialog/DeviceNameDialog.tsx";
 import { ImportDialog } from "@components/Dialog/ImportDialog.tsx";
@@ -5,12 +6,11 @@ import { NodeDetailsDialog } from "@components/Dialog/NodeDetailsDialog/NodeDeta
 import { PkiBackupDialog } from "@components/Dialog/PKIBackupDialog.tsx";
 import { QRDialog } from "@components/Dialog/QRDialog.tsx";
 import { RebootDialog } from "@components/Dialog/RebootDialog.tsx";
-import { RebootOTADialog } from "@components/Dialog/RebootOTADialog.tsx";
 import { RefreshKeysDialog } from "@components/Dialog/RefreshKeysDialog/RefreshKeysDialog.tsx";
 import { RemoveNodeDialog } from "@components/Dialog/RemoveNodeDialog.tsx";
 import { ShutdownDialog } from "@components/Dialog/ShutdownDialog.tsx";
 import { UnsafeRolesDialog } from "@components/Dialog/UnsafeRolesDialog/UnsafeRolesDialog.tsx";
-import { useDevice } from "@core/stores/deviceStore.ts";
+import { useDevice } from "@core/stores";
 
 export const DialogManager = () => {
   const { channels, config, dialog, setDialogOpen } = useDevice();
@@ -79,16 +79,16 @@ export const DialogManager = () => {
           setDialogOpen("refreshKeys", open);
         }}
       />
-      <RebootOTADialog
-        open={dialog.rebootOTA}
-        onOpenChange={(open) => {
-          setDialogOpen("rebootOTA", open);
-        }}
-      />
       <DeleteMessagesDialog
         open={dialog.deleteMessages}
         onOpenChange={(open) => {
           setDialogOpen("deleteMessages", open);
+        }}
+      />
+      <ClientNotificationDialog
+        open={dialog.clientNotification}
+        onOpenChange={(open) => {
+          setDialogOpen("clientNotification", open);
         }}
       />
     </>

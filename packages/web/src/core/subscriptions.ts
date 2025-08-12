@@ -1,8 +1,7 @@
 import { ensureDefaultUser } from "@core/dto/NodeNumToNodeInfoDTO.ts";
 import PacketToMessageDTO from "@core/dto/PacketToMessageDTO.ts";
-import type { Device } from "@core/stores/deviceStore.ts";
+import { type Device, type MessageStore, MessageType } from "@core/stores";
 import { type MeshDevice, Protobuf } from "@meshtastic/core";
-import { type MessageStore, MessageType } from "./stores/messageStore/index.ts";
 
 export const subscribeAll = (
   device: Device,
@@ -113,6 +112,13 @@ export const subscribeAll = (
       time: meshPacket.rxTime,
     });
   });
+
+  connection.events.onClientNotificationPacket.subscribe(
+    (clientNotificationPacket) => {
+      device.addClientNotification(clientNotificationPacket);
+      device.setDialogOpen("clientNotification", true);
+    },
+  );
 
   connection.events.onRoutingPacket.subscribe((routingPacket) => {
     if (routingPacket.data.variant.case === "errorReason") {
