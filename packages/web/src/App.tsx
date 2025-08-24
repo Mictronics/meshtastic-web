@@ -3,6 +3,7 @@ import { CommandPalette } from "@components/CommandPalette/index.tsx";
 import { DialogManager } from "@components/Dialog/DialogManager.tsx";
 import { NewDeviceDialog } from "@components/Dialog/NewDeviceDialog.tsx";
 import { KeyBackupReminder } from "@components/KeyBackupReminder.tsx";
+import { Toaster } from "@components/Toaster.tsx";
 import { ErrorPage } from "@components/UI/ErrorPage.tsx";
 import Footer from "@components/UI/Footer.tsx";
 import { useTheme } from "@core/hooks/useTheme.ts";
@@ -12,6 +13,8 @@ import { Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ErrorBoundary } from "react-error-boundary";
 import { MapProvider } from "react-map-gl/maplibre";
+// Import feature flags and dev overrides
+import "@core/services/dev-overrides.ts";
 
 export function App() {
   const { getDevice } = useDeviceStore();
@@ -31,7 +34,7 @@ export function App() {
           setConnectDialogOpen(open);
         }}
       />
-      {/* <Toaster /> */}
+      <Toaster />
       <TanStackRouterDevtools position="bottom-right" />
       <DeviceWrapper device={device}>
         <div

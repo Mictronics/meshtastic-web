@@ -17,7 +17,6 @@
 		"now": "Сега",
 		"ok": "Добре",
 		"print": "Отпечатване",
-		"rebootOtaNow": "Reboot to OTA Mode Now",
 		"remove": "Изтрий",
 		"requestNewKeys": "Заявка за нови ключове",
 		"requestPosition": "Request Position",
@@ -25,7 +24,7 @@
 		"save": "Запис",
 		"scanQr": "Сканиране на QR кода",
 		"traceRoute": "Trace Route",
-		"submit": "Submit"
+		"submit": "Изпращане"
 	},
 	"app": {
 		"title": "Meshtastic",
@@ -137,5 +136,7 @@
 			"managed": "Изисква се поне един администраторски ключ, ако възелът е управляван.",
 			"key": "Ключът е задължителен."
 		}
-	}
+	},
+	"yes": "Yes",
+	"no": "No"
 }
