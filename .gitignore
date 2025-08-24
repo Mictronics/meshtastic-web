@@ -9,3 +9,4 @@ __screenshots__*
 npm/
 deno.lock
 .idea
+**/LICENSE
