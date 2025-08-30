@@ -39,11 +39,11 @@ export function useFilterNode() {
       lastHeard: [0, 864000], // 0-10 days
       isFavorite: undefined,
       viaMqtt: undefined,
-      snr: [-20, 10],
+      snr: [-25, 10],
       channelUtilization: [0, 100],
       airUtilTx: [0, 100],
       batteryLevel: [0, 101],
-      voltage: [0, 5],
+      voltage: [0, 15],
       role: Object.values(Protobuf.Config.Config_DeviceConfig_Role).filter(
         (v): v is Protobuf.Config.Config_DeviceConfig_Role =>
           typeof v === "number",
