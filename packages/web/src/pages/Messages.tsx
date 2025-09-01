@@ -13,12 +13,13 @@ import {
   MessageType,
   useDevice,
   useMessageStore,
+  useNodeDB,
   useSidebar,
 } from "@core/stores";
 import { cn } from "@core/utils/cn.ts";
 import { randId } from "@core/utils/randId.ts";
 import { Protobuf, Types } from "@meshtastic/core";
-import { getChannelName } from "@pages/Channels.tsx";
+import { getChannelName } from "@pages/Config/ChannelConfig.tsx";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { HashIcon, LockIcon, LockOpenIcon } from "lucide-react";
 import {
@@ -42,15 +43,9 @@ function SelectMessageChat() {
 }
 
 export const MessagesPage = () => {
-  const {
-    channels,
-    getNodes,
-    getNode,
-    hasNodeError,
-    getUnreadCount,
-    resetUnread,
-    connection,
-  } = useDevice();
+  const { channels, getUnreadCount, resetUnread, connection } = useDevice();
+  const { getNodes, getNode, hasNodeError } = useNodeDB();
+
   const { getMyNodeNum, getMessages, setMessageState } = useMessageStore();
 
   const { type, chatId } = useParams({ from: messagesWithParamsRoute.id });
