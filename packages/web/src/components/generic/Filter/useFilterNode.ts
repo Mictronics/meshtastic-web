@@ -160,7 +160,11 @@ export function useFilterNode() {
         return false;
       }
 
-      const voltage = node.deviceMetrics?.voltage ?? 0;
+      let voltage = node.deviceMetrics?.voltage ?? 0;
+      if (voltage <= 0.0) {
+        // Fix nodes that report negative voltage.
+        voltage = 0.0;
+      }
       if (
         voltage < filterState.voltage[0] ||
         (voltage > filterState.voltage[1] &&
