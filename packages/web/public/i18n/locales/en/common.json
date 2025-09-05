@@ -55,7 +55,12 @@
       "suffix": "ms"
     },
     "second": { "one": "Second", "plural": "Seconds" },
-    "day": { "one": "Day", "plural": "Days" },
+    "day": {
+      "one": "Day",
+      "plural": "Days",
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
     "month": { "one": "Month", "plural": "Months" },
     "year": { "one": "Year", "plural": "Years" },
     "snr": "SNR",
@@ -106,6 +111,9 @@
       "generic": "This field is required.",
       "managed": "At least one admin key is requred if the node is managed.",
       "key": "Key is required."
+    },
+    "invalidOverrideFreq": {
+      "number": "Invalid format, expected between 430-930 MHz."
     }
   },
   "yes": "Yes",
