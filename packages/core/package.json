@@ -1,14 +1,14 @@
 {
   "name": "@meshtastic/core",
-  "version": "2.6.6-1",
+  "version": "2.6.7",
   "description": "Core functionalities for Meshtastic web applications.",
   "exports": {
     ".": "./mod.ts"
   },
   "type": "module",
-  "main": "./dist/mod.mjs",
-  "module": "./dist/mod.mjs",
-  "types": "./dist/mod.d.mts",
+  "main": "./dist/mod.js",
+  "module": "./dist/mod.js",
+  "types": "./dist/mod.d.ts",
   "license": "GPL-3.0-only",
   "tsdown": {
     "entry": "mod.ts",
@@ -19,6 +19,15 @@
     "splitting": false,
     "clean": true
   },
+  "jsrInclude": [
+    "mod.ts",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "jsrExclude": [
+    "src/**/*.test.ts"
+  ],
   "files": [
     "package.json",
     "README.md",
