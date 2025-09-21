@@ -16,6 +16,7 @@ export {
   useDeviceStore,
   type ValidConfigType,
   type ValidModuleConfigType,
+  type WaypointWithMetadata,
 } from "@core/stores/deviceStore";
 export {
   MessageState,
@@ -29,6 +30,9 @@ export {
   SidebarProvider,
   useSidebar, // TODO: Bring hook into this file
 } from "@core/stores/sidebarStore";
+
+// Re-export idb-keyval functions for clearing all stores, expand this if we add more local storage types
+export { clear as clearAllStores } from "idb-keyval";
 
 // Define hooks to access the stores
 export const useNodeDB = bindStoreToDevice(
