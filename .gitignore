@@ -10,3 +10,5 @@ npm/
 deno.lock
 .idea
 **/LICENSE
+
+packages/protobufs/packages/ts/dist
