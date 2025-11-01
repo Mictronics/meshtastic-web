@@ -1,4 +1,4 @@
-import { type LangCode, supportedLanguages } from "@app/i18n-config.ts";
+import type { LangCode } from "@app/i18n-config.ts";
 import useLang from "@core/hooks/useLang.ts";
 import { cn } from "@core/utils/cn.ts";
 import { Check, Languages } from "lucide-react";
@@ -21,7 +21,7 @@ export default function LanguageSwitcher({
   disableHover = false,
 }: LanguageSwitcherProps) {
   const { i18n } = useTranslation("ui");
-  const { set: setLanguage, currentLanguage } = useLang();
+  const { set: setLanguage, current, getSupportedLangs } = useLang();
 
   const handleLanguageChange = useCallback(
     async (languageCode: LangCode) => {
@@ -65,12 +65,12 @@ export default function LanguageSwitcher({
                 "group-hover:text-gray-900 dark:group-hover:text-white",
             )}
           >
-            {currentLanguage?.name}
+            {current?.name}
           </Subtle>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-48">
-        {supportedLanguages.map((language) => (
+        {getSupportedLangs.map((language) => (
           <DropdownMenuItem
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}

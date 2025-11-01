@@ -1,10 +1,10 @@
 import { DialogManager } from "@components/Dialog/DialogManager.tsx";
 import type { useAppStore, useMessageStore } from "@core/stores";
-import ConfigPage from "@pages/Config/index.tsx";
 import { Dashboard } from "@pages/Dashboard/index.tsx";
 import MapPage from "@pages/Map/index.tsx";
 import MessagesPage from "@pages/Messages.tsx";
 import NodesPage from "@pages/Nodes/index.tsx";
+import ConfigPage from "@pages/Settings/index.tsx";
 import {
   createRootRouteWithContext,
   createRoute,
@@ -74,9 +74,68 @@ const mapRoute = createRoute({
   component: MapPage,
 });
 
-const configRoute = createRoute({
+const coordParamsSchema = z.object({
+  // Accept "strings" from the URL, coerce to number, then validate
+  long: z.coerce
+    .number()
+    .refine(
+      (n) => Number.isFinite(n) && n >= -180 && n <= 180,
+      "Invalid longitude (-180..180).",
+    ),
+  lat: z.coerce
+    .number()
+    .refine(
+      (n) => Number.isFinite(n) && n >= -90 && n <= 90,
+      "Invalid latitude (-90..90).",
+    ),
+  // Typical web map zoom levels ~0..22 (adjust if your map lib differs)
+  zoom: z.coerce
+    .number()
+    .int()
+    .min(0, "Zoom too small.")
+    .max(22, "Zoom too large."),
+});
+
+export const mapWithParamsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/config",
+  path: "/map/$long/$lat/$zoom",
+  component: MapPage,
+  parseParams: (raw) => coordParamsSchema.parse(raw),
+  // // This controls how params are serialized when you navigate/link
+  // stringifyParams: (p) => ({
+  //   long: String(p.long),
+  //   lat: String(p.lat),
+  //   zoom: String(p.zoom),
+  // }),
+});
+
+export const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/settings",
+  component: ConfigPage,
+  // beforeLoad: () => {
+  //   throw redirect({
+  //     to: "/settings/radio",
+  //     replace: true,
+  //   });
+  // },
+});
+
+export const radioRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: "radio",
+  component: ConfigPage,
+});
+
+export const deviceRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: "device",
+  component: ConfigPage,
+});
+
+export const moduleRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: "module",
   component: ConfigPage,
 });
 
@@ -97,7 +156,8 @@ const routeTree = rootRoute.addChildren([
   messagesRoute,
   messagesWithParamsRoute,
   mapRoute,
-  configRoute,
+  mapWithParamsRoute,
+  settingsRoute.addChildren([radioRoute, deviceRoute, moduleRoute]),
   nodesRoute,
   dialogWithParamsRoute,
 ]);
