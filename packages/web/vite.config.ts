@@ -5,10 +5,9 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
 import { createHtmlPlugin } from "vite-plugin-html";
-import { VitePWA } from "vite-plugin-pwa";
 
 let hash = "";
-let version = "Mictronics";
+let version = "";
 try {
   hash = execSync("git rev-parse --short HEAD", { encoding: "utf8" }).trim();
 } catch (error) {
@@ -23,6 +22,8 @@ try {
 } catch (error) {
   console.error("Error getting git version.");
 }
+
+version += " Mictronics"
 
 const CONTENT_SECURITY_POLICY =
   "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn-cookieyes.com; style-src 'self' 'unsafe-inline' data: https://rsms.me https://cdn.jsdelivr.net; img-src 'self' data:; font-src 'self' data: https://rsms.me https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self';";
@@ -48,9 +49,6 @@ export default defineConfig(({ mode }) => {
                 : "",
           },
         },
-      }),
-      VitePWA({
-        selfDestroying: true,
       }),
     ],
     optimizeDeps: {
