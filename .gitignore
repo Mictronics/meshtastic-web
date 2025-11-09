@@ -12,3 +12,8 @@ deno.lock
 **/LICENSE
 
 packages/protobufs/packages/ts/dist
+
+# Local dev certs
+*.pem
+*.crt
+*.key
