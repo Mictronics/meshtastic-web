@@ -12,6 +12,8 @@ import {
 import type { ChangeRegistry, ConfigChangeKey } from "./changeRegistry.ts";
 import {
   createChangeRegistry,
+  getAdminMessageChangeCount,
+  getAllAdminMessages,
   getAllChannelChanges,
   getAllConfigChanges,
   getAllModuleConfigChanges,
@@ -52,9 +54,17 @@ type DeviceData = {
   waypoints: WaypointWithMetadata[];
   neighborInfo: Map<number, Protobuf.Mesh.NeighborInfo>;
 };
+export type ConnectionPhase =
+  | "disconnected"
+  | "connecting"
+  | "configuring"
+  | "configured";
+
 export interface Device extends DeviceData {
   // Ephemeral state (not persisted)
   status: Types.DeviceStatusEnum;
+  connectionPhase: ConnectionPhase;
+  connectionId: ConnectionId | null;
   channels: Map<Types.ChannelNumber, Protobuf.Channel.Channel>;
   config: Protobuf.LocalOnly.LocalConfig;
   moduleConfig: Protobuf.LocalOnly.LocalModuleConfig;
@@ -70,6 +80,8 @@ export interface Device extends DeviceData {
   clientNotifications: Protobuf.Mesh.ClientNotification[];
 
   setStatus: (status: Types.DeviceStatusEnum) => void;
+  setConnectionPhase: (phase: ConnectionPhase) => void;
+  setConnectionId: (id: ConnectionId | null) => void;
   setConfig: (config: Protobuf.Config.Config) => void;
   setModuleConfig: (config: Protobuf.ModuleConfig.ModuleConfig) => void;
   getEffectiveConfig<K extends ValidConfigType>(
@@ -136,6 +148,9 @@ export interface Device extends DeviceData {
   getAllConfigChanges: () => Protobuf.Config.Config[];
   getAllModuleConfigChanges: () => Protobuf.ModuleConfig.ModuleConfig[];
   getAllChannelChanges: () => Protobuf.Channel.Channel[];
+  queueAdminMessage: (message: Protobuf.Admin.AdminMessage) => void;
+  getAllQueuedAdminMessages: () => Protobuf.Admin.AdminMessage[];
+  getAdminMessageChangeCount: () => number;
 }
 
 export interface deviceState {
@@ -153,6 +168,16 @@ export interface deviceState {
   ) => void;
   removeSavedConnection: (id: ConnectionId) => void;
   getSavedConnections: () => Connection[];
+
+  // Active connection tracking
+  activeConnectionId: ConnectionId | null;
+  setActiveConnectionId: (id: ConnectionId | null) => void;
+  getActiveConnectionId: () => ConnectionId | null;
+
+  // Helper selectors for connection ↔ device relationships
+  getActiveConnection: () => Connection | undefined;
+  getDeviceForConnection: (id: ConnectionId) => Device | undefined;
+  getConnectionForDevice: (deviceId: number) => Connection | undefined;
 }
 
 interface PrivateDeviceState extends deviceState {
@@ -185,6 +210,8 @@ function deviceFactory(
     neighborInfo,
 
     status: Types.DeviceStatusEnum.DeviceDisconnected,
+    connectionPhase: "disconnected",
+    connectionId: null,
     channels: new Map(),
     config: create(Protobuf.LocalOnly.LocalConfigSchema),
     moduleConfig: create(Protobuf.LocalOnly.LocalModuleConfigSchema),
@@ -223,6 +250,26 @@ function deviceFactory(
           const device = draft.devices.get(id);
           if (device) {
             device.status = status;
+          }
+        }),
+      );
+    },
+    setConnectionPhase: (phase: ConnectionPhase) => {
+      set(
+        produce<PrivateDeviceState>((draft) => {
+          const device = draft.devices.get(id);
+          if (device) {
+            device.connectionPhase = phase;
+          }
+        }),
+      );
+    },
+    setConnectionId: (connectionId: ConnectionId | null) => {
+      set(
+        produce<PrivateDeviceState>((draft) => {
+          const device = draft.devices.get(id);
+          if (device) {
+            device.connectionId = connectionId;
           }
         }),
       );
@@ -898,6 +945,59 @@ function deviceFactory(
         .map((entry) => entry.value as Protobuf.Channel.Channel)
         .filter((c): c is Protobuf.Channel.Channel => c !== undefined);
     },
+
+    queueAdminMessage: (message: Protobuf.Admin.AdminMessage) => {
+      // Generate a unique ID for this admin message
+      const messageId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
+
+      // Determine the variant type
+      const variant =
+        message.payloadVariant.case === "setFixedPosition"
+          ? "setFixedPosition"
+          : "other";
+
+      set(
+        produce<PrivateDeviceState>((draft) => {
+          const device = draft.devices.get(id);
+          if (!device) {
+            return;
+          }
+
+          const keyStr = serializeKey({
+            type: "adminMessage",
+            variant,
+            id: messageId,
+          });
+
+          device.changeRegistry.changes.set(keyStr, {
+            key: { type: "adminMessage", variant, id: messageId },
+            value: message,
+            timestamp: Date.now(),
+          });
+        }),
+      );
+    },
+
+    getAllQueuedAdminMessages: () => {
+      const device = get().devices.get(id);
+      if (!device) {
+        return [];
+      }
+
+      const changes = getAllAdminMessages(device.changeRegistry);
+      return changes
+        .map((entry) => entry.value as Protobuf.Admin.AdminMessage)
+        .filter((m): m is Protobuf.Admin.AdminMessage => m !== undefined);
+    },
+
+    getAdminMessageChangeCount: () => {
+      const device = get().devices.get(id);
+      if (!device) {
+        return 0;
+      }
+
+      return getAdminMessageChangeCount(device.changeRegistry);
+    },
   };
 }
 
@@ -907,6 +1007,7 @@ export const deviceStoreInitializer: StateCreator<PrivateDeviceState> = (
 ) => ({
   devices: new Map(),
   savedConnections: [],
+  activeConnectionId: null,
 
   addDevice: (id) => {
     const existing = get().devices.get(id);
@@ -972,6 +1073,33 @@ export const deviceStoreInitializer: StateCreator<PrivateDeviceState> = (
     );
   },
   getSavedConnections: () => get().savedConnections,
+
+  setActiveConnectionId: (id) => {
+    set(
+      produce<PrivateDeviceState>((draft) => {
+        draft.activeConnectionId = id;
+      }),
+    );
+  },
+  getActiveConnectionId: () => get().activeConnectionId,
+
+  getActiveConnection: () => {
+    const activeId = get().activeConnectionId;
+    if (!activeId) {
+      return undefined;
+    }
+    return get().savedConnections.find((c) => c.id === activeId);
+  },
+  getDeviceForConnection: (id) => {
+    const connection = get().savedConnections.find((c) => c.id === id);
+    if (!connection?.meshDeviceId) {
+      return undefined;
+    }
+    return get().devices.get(connection.meshDeviceId);
+  },
+  getConnectionForDevice: (deviceId) => {
+    return get().savedConnections.find((c) => c.meshDeviceId === deviceId);
+  },
 });
 
 const persistOptions: PersistOptions<PrivateDeviceState, DevicePersisted> = {

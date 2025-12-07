@@ -3,11 +3,12 @@
     "title": "Navigering",
     "messages": "Meddelanden",
     "map": "Karta",
-    "settings": "Settings",
+    "settings": "Inställningar",
     "channels": "Kanaler",
     "radioConfig": "Radioinställningar",
-    "deviceConfig": "Device Config",
+    "deviceConfig": "Enhetskonfiguration",
     "moduleConfig": "Modulinställningar",
+    "manageConnections": "Hantera anslutningar",
     "nodes": "Noder"
   },
   "app": {
@@ -77,8 +78,8 @@
       "description": "Ändrignarna av {{case}}-inställningarna har sparats."
     },
     "saveAllSuccess": {
-      "title": "Saved",
-      "description": "All configuration changes have been saved."
+      "title": "Sparat",
+      "description": "Alla konfigurationsändringar har sparats."
     },
     "favoriteNode": {
       "title": "{{action}} {{nodeName}} {{direction}} dina favoriter.",
@@ -149,7 +150,7 @@
   },
   "airtimeUtilization": {
     "label": "Sändningstidsutnyttjande (%)",
-    "short": "Airtime Util. (%)"
+    "short": "Sändningstidsutnyttjande (%)"
   },
   "batteryLevel": {
     "label": "Batterinivå (%)",
@@ -161,7 +162,7 @@
   },
   "channelUtilization": {
     "label": "Kanalutnyttjande (%)",
-    "short": "Channel Util. (%)"
+    "short": "Kanalutnyttjande (%)"
   },
   "hops": {
     "direct": "Direkt",
@@ -192,7 +193,7 @@
     "label": "Okänt antal hopp"
   },
   "showUnheard": {
-    "label": "Aldrig hörd"
+    "label": "Senast hörd okänt"
   },
   "language": {
     "label": "Språk",
@@ -216,7 +217,7 @@
       "step4": "All annan relevant information"
     },
     "reportLink": "Du kan rapportera problemet på vår <0>GitHub</0>",
-    "dashboardLink": "Återvänd till <0>start</0>",
+    "connectionsLink": "Återgå till <0>-anslutningarna</0>",
     "detailsSummary": "Detaljer om felet",
     "errorMessageLabel": "Felmeddelande:",
     "stackTraceLabel": "Stackspårning:",
