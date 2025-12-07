@@ -62,7 +62,7 @@ export const Display = ({ onFormInit }: DisplayConfigProps) => {
               properties: {
                 enumValue:
                   Protobuf.Config
-                    .Config_DisplayConfig_GpsCoordinateFormat,
+                    .Config_DisplayConfig_DeprecatedGpsCoordinateFormat,
               },
             },
             {
